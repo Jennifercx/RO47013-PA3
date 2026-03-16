@@ -1,1 +1,3 @@
 weld_metrics.json
+__pycache__/
+*.py[cod]
