@@ -6,19 +6,14 @@ import math
 import matplotlib.pyplot as plt
 import pygame
 import json
-import sys
 import importlib.util
 from pathlib import Path
 
-pa1_template_dir = Path(__file__).resolve().parents[1] / "PA1" / "PA1_template_code"
-if pa1_template_dir.exists() and str(pa1_template_dir) not in sys.path:
-    sys.path.append(str(pa1_template_dir))
-
 Physics = None
-physics_module_path = pa1_template_dir / "Physics.py"
+physics_module_path = Path(__file__).resolve().parent / "Physics.py"
 if physics_module_path.exists():
     try:
-        physics_spec = importlib.util.spec_from_file_location("pa1_physics", physics_module_path)
+        physics_spec = importlib.util.spec_from_file_location("ro47013_physics", physics_module_path)
         if physics_spec is not None and physics_spec.loader is not None:
             physics_module = importlib.util.module_from_spec(physics_spec)
             physics_spec.loader.exec_module(physics_module)
