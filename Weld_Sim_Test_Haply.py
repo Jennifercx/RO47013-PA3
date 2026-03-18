@@ -209,6 +209,7 @@ haply_screen_center = np.array([0.0, 0.12], dtype=float)
 oc_endpoint_scale = 0.06
 oc_endpoint_scale_default = oc_endpoint_scale
 oc_endpoint_enabled = True
+show_true_position = True
 
 def ocean_current_field(pos, t):
     total = np.zeros(2)
@@ -233,6 +234,8 @@ seam_cells = num_seam_segments
 seam_burn = np.zeros(seam_cells)
 seam_burn_gain = 1.0 / dwell_time_to_burn
 seam_burn_decay = 0.02
+weld_completion_threshold = 0.95
+weld_completion_fraction = 0.98
 
 
 # ==================== Main Loop ===================== #
@@ -263,6 +266,9 @@ while run:
                 oc_endpoint_enabled = not oc_endpoint_enabled
                 oc_endpoint_scale = oc_endpoint_scale_default if oc_endpoint_enabled else 0.0
                 print(f"ocean-current-on-endpoint toggled: {oc_endpoint_enabled} (scale={oc_endpoint_scale})")
+            if event.key == ord('t'):
+                show_true_position = not show_true_position
+                print(f"true-position marker toggled: {show_true_position}")
     
     # ==================== Dynamics  ===================== #
 
@@ -376,9 +382,11 @@ while run:
     if is_dwelling and cell_idx is not None:
         seam_burn[cell_idx] = min(1.0, seam_burn[cell_idx] + seam_burn_gain * dt)
 
-    # End sim if full seam is welded
-    if np.all(seam_burn >= 0.99):
+    # End sim if seam is effectively fully welded
+    welded_fraction = np.mean(seam_burn >= weld_completion_threshold)
+    if welded_fraction >= weld_completion_fraction:
         print("\n WHOLE SEAM SUCCESSFULLY WELDED! ENDING SIMULATION... \n")
+        run = False
         break
 
     i = i + 1
@@ -424,18 +432,25 @@ while run:
 
     if closest is not None:
         closest_px = (int(window_scale * closest[0] + xc), int(-window_scale * closest[1] + yc))
-        pygame.draw.circle(window, seam_color.astype(int), closest_px, max(5, int(15 * alpha)))
+        marker_radius = max(3, int(10 * alpha))
+        marker_color = (255, 180, 0, 110)
+        marker_surface = pygame.Surface(window.get_size(), pygame.SRCALPHA)
+        pygame.draw.circle(marker_surface, marker_color, closest_px, marker_radius)
+        pygame.draw.circle(marker_surface, (255, 120, 0, 180), closest_px, marker_radius, 1)
+        window.blit(marker_surface, (0, 0))
 
     # ==================== Render Arm ===================== #
 
     ref_px = int(window_scale*(pr[0] + x0) + xc)
     ref_py = int(-window_scale*(pr[1] + y0) + yc)
-    pygame.draw.circle(window, (0, 255, 0), (ref_px, ref_py), 5)
     
     pygame.draw.lines(window, (0, 0, 255), False, [(int(window_scale*(x0)+xc), int(-window_scale*(y0)+yc)), (int(window_scale*(x1w)+xc), int(-window_scale*(y1w)+yc)), (int(window_scale*(x2w)+xc), int(-window_scale*(y2w)+yc))], 6)
     pygame.draw.circle(window, (0, 0, 0), (int(window_scale*(x0)+xc),int(-window_scale*(y0)+yc)), 9)
     pygame.draw.circle(window, (0, 0, 0), (int(window_scale*(x1w)+xc),int(-window_scale*(y1w)+yc)), 9)
     pygame.draw.circle(window, (255, 0, 0), (int(window_scale*(x2w)+xc),int(-window_scale*(y2w)+yc)), 5)
+
+    if show_true_position:
+        pygame.draw.circle(window, (0, 255, 0), (ref_px, ref_py), 5)
 
     force_scale = 50/(window_scale*(l1*l1))
     pygame.draw.line(window, (0, 255, 255), (int(window_scale*(x2w)+xc),int(-window_scale*(y2w)+yc)), (int((window_scale*(x2w)+xc)+F[0]*force_scale),int((-window_scale*(y2w)+yc-F[1]*force_scale))), 2)
