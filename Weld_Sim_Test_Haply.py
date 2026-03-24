@@ -6,8 +6,6 @@ import math
 import matplotlib.pyplot as plt
 import pygame
 import json
-import sys
-from pathlib import Path
 from Physics import Physics
 
 # ==================== Robot Model ===================== #
@@ -67,7 +65,7 @@ l1 = 0.33
 l2 = 0.33
 l = [l1, l2]
 
-Ks = np.diag([200, 200])
+Ks = np.diag([200, 200])  # TODO: tune stiffness, was 400 before
 theta = 0.0
 stiffness_value_increment = 100
 stiffness_angle_increment = 10 * np.pi / 180
@@ -127,6 +125,8 @@ if Physics is not None:
 
 K = Ks.copy()
 B = np.diag([20.0, 20.0])
+# Critical damping design: B = 2*sqrt(K*m) for each axis
+# B = np.diag([2.0*np.sqrt(K[0,0] * m), 2.0*np.sqrt(K[1,1] * m)])
 
 # ==================== Path Definition (Sinusoidal) ===================== #
 
@@ -183,17 +183,35 @@ if abs_mean[0] > 0 and abs_mean[1] > 0:
 
 haply_flip_x = True
 haply_flip_y = True
+haply_force_flip_x = True
+haply_force_flip_y = False
 haply_scale_x = 5.0
 haply_scale_y = 5.5
-haply_force_scale = 0.25
-haply_force_limit = 1.2
+haply_force_scale = 0.75  # TODO: tune gain -> 1.0 feels unstable
+haply_force_limit = 3.0  # TODO: tune force limit
+haply_force_filter_alpha = 0.35
 haply_center_raw = None
 haply_screen_center = np.array([0.0, 0.12], dtype=float)
+sim_cmd_gain = 0.35
+sim_current_gain = 1.0
+sim_water_drag = 6.0
+haptic_cmd_gain = 0.20
+haptic_current_gain = 1.35
+haptic_water_drag = 1.80
+haptic_cmd_gain_passive = 0.03
+haptic_water_drag_passive = 0.45
+haptic_passive_speed_threshold = 0.04
+haptic_active_speed_threshold = 0.12
+haptic_min_current_force = 0.08
+haptic_equalize_diagonals = True
+haptic_baseline_current_force = 0.26
+haptic_clarity_force = 0.35
+haptic_clarity_gain = 0.75
 
 oc_endpoint_scale = 0.06
 oc_endpoint_scale_default = oc_endpoint_scale
 oc_endpoint_enabled = True
-show_true_position = True
+show_true_position = False
 
 def ocean_current_field(pos, t):
     total = np.zeros(2)
@@ -202,6 +220,15 @@ def ocean_current_field(pos, t):
         val = oc_amps[i] * math.sin(kdotx - 2*math.pi*oc_freqs[i]*t + oc_phase[i])
         total += val * oc_dirs[i]
     return total
+
+def equalize_diagonal_force(vec):
+    v_norm = np.linalg.norm(vec)
+    if v_norm < 1e-12:
+        return vec
+    v_max = np.max(np.abs(vec))
+    if v_max < 1e-12:
+        return vec
+    return vec * (v_max / v_norm)
 
 # ==================== Visual State ===================== #
 
@@ -228,6 +255,10 @@ history_dist = []
 history_speed = []
 history_pos = []
 sim_start_time = None
+f_haply_filtered = np.zeros(2)
+f_haply_device_current = np.zeros(2)
+f_haply_world_current = np.zeros(2)
+current_dir_memory = np.array([1.0, 0.0], dtype=float)
 
 run = True
 while run:
@@ -291,22 +322,58 @@ while run:
     vel_err = dp_ref - dp
     
     F_cmd = K.dot(pos_err) + B.dot(vel_err)
-    F_dist = chaotic_disturbance(t)
+    F_dist = chaotic_disturbance(t)  # unused now but can be added if desired
     
     endpoint_world = p + np.array([x0, y0])
     F_oc = ocean_current_field(endpoint_world, t) * oc_endpoint_scale
-    F = F_cmd + F_dist + F_oc
+    F = sim_cmd_gain * F_cmd + sim_current_gain * F_oc - sim_water_drag * dp
+    # Blend toward low restoring/drag forces when user intent is low,
+    # so the endpoint tends to drift with the current if the user is passive.
+    user_intent_speed = np.linalg.norm(dp_ref)
+    intent_denom = max(1e-9, haptic_active_speed_threshold - haptic_passive_speed_threshold)
+    intent_blend = np.clip((user_intent_speed - haptic_passive_speed_threshold) / intent_denom, 0.0, 1.0)
+    haptic_cmd_gain_eff = haptic_cmd_gain_passive + intent_blend * (haptic_cmd_gain - haptic_cmd_gain_passive)
+    haptic_water_drag_eff = haptic_water_drag_passive + intent_blend * (haptic_water_drag - haptic_water_drag_passive)
+    F_haptic_world = haptic_cmd_gain_eff * F_cmd + haptic_current_gain * F_oc - haptic_water_drag_eff * dp
+    oc_norm = np.linalg.norm(F_oc)
+    if oc_norm > 1e-9:
+        current_dir_memory = F_oc / oc_norm
+    if oc_norm > 1e-9:
+        haptic_norm = np.linalg.norm(F_haptic_world)
+        if haptic_norm < haptic_min_current_force:
+            F_haptic_world += (haptic_min_current_force - haptic_norm) * (F_oc / oc_norm)
+    if haptic_equalize_diagonals:
+        F_haptic_world = equalize_diagonal_force(F_haptic_world)
+    haptic_norm = np.linalg.norm(F_haptic_world)
+    if haptic_norm < haptic_baseline_current_force:
+        F_haptic_world += (haptic_baseline_current_force - haptic_norm) * current_dir_memory
+    haptic_norm = np.linalg.norm(F_haptic_world)
+    if haptic_norm > 1e-12:
+        clarity_boost = 1.0 + haptic_clarity_gain * math.exp(-haptic_norm / haptic_clarity_force)
+        F_haptic_world = clarity_boost * F_haptic_world
+    # F = np.zeros(2)
 
     if device_connected and physics is not None:
-        f_haply_sim = np.clip(F_cmd * haply_force_scale, -haply_force_limit, haply_force_limit)
+        f_haply_sim = F_haptic_world * haply_force_scale
+        f_norm = np.linalg.norm(f_haply_sim)
+        if f_norm > haply_force_limit and f_norm > 1e-12:
+            f_haply_sim = (haply_force_limit / f_norm) * f_haply_sim
+        f_haply_filtered = haply_force_filter_alpha * f_haply_sim + (1.0 - haply_force_filter_alpha) * f_haply_filtered
+        f_haply_world_current = f_haply_filtered.copy()
         f_haply_device = np.array([
-            -f_haply_sim[0] if haply_flip_x else f_haply_sim[0],
-            -f_haply_sim[1] if haply_flip_y else f_haply_sim[1]
+            -f_haply_filtered[0] if haply_force_flip_x else f_haply_filtered[0],
+            -f_haply_filtered[1] if haply_force_flip_y else f_haply_filtered[1]
         ], dtype=float)
+        f_haply_device_current = f_haply_device.copy()
         try:
             physics.update_force(f_haply_device)
         except Exception:
             device_connected = False
+            f_haply_device_current = np.zeros(2)
+            f_haply_world_current = np.zeros(2)
+    else:
+        f_haply_device_current = np.zeros(2)
+        f_haply_world_current = np.zeros(2)
 
     p_prev = p.copy()
 
@@ -436,8 +503,12 @@ while run:
     if show_true_position:
         pygame.draw.circle(window, (0, 255, 0), (ref_px, ref_py), 5)
 
-    force_scale = 50/(window_scale*(l1*l1))
-    pygame.draw.line(window, (0, 255, 255), (int(window_scale*(x2w)+xc),int(-window_scale*(y2w)+yc)), (int((window_scale*(x2w)+xc)+F[0]*force_scale),int((-window_scale*(y2w)+yc-F[1]*force_scale))), 2)
+    force_scale = 55.0
+    f_vis = np.array([
+        -f_haply_device_current[0] if haply_force_flip_x else f_haply_device_current[0],
+        -f_haply_device_current[1] if haply_force_flip_y else f_haply_device_current[1]
+    ], dtype=float)
+    pygame.draw.line(window, (0, 255, 255), (int(window_scale*(x2w)+xc),int(-window_scale*(y2w)+yc)), (int((window_scale*(x2w)+xc)+f_vis[0]*force_scale),int((-window_scale*(y2w)+yc-f_vis[1]*force_scale))), 2)
     force_scale_oc = 120/(window_scale*(l1*l1))
     pygame.draw.line(window, (255, 0, 255), (int(window_scale*(x2w)+xc),int(-window_scale*(y2w)+yc)), (int((window_scale*(x2w)+xc)+F_oc[0]*force_scale_oc),int((-window_scale*(y2w)+yc-F_oc[1]*force_scale_oc))), 2)
     
