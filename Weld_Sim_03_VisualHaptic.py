@@ -6,11 +6,7 @@ import math
 import matplotlib.pyplot as plt
 import pygame
 import json
-
-try:
-    from Physics import Physics
-except Exception:
-    Physics = None
+from Physics import Physics
 
 # ==================== Robot Model ===================== #
 
@@ -69,7 +65,7 @@ l1 = 0.33
 l2 = 0.33
 l = [l1, l2]
 
-Ks = np.diag([200, 200])
+Ks = np.diag([200, 200])  # TODO: tune stiffness, was 400 before
 theta = 0.0
 stiffness_value_increment = 100
 stiffness_angle_increment = 10 * np.pi / 180
@@ -97,7 +93,10 @@ FPS = int(1 / dts)
 t = 0.0
 pm = np.zeros(2)
 pr = np.zeros(2)
-p = np.array([0.1, 0.1])
+# Initialise arm endpoint to match HAPLY rest position (haply_screen_center - [x0,y0])
+# so there is no position error on frame 1 and no jump at startup.
+# haply_screen_center[1]=0.12, y0=-0.30 → p_y = 0.12-(-0.30) = 0.42 (upper screen)
+p = np.array([0.0, 0.42])
 dp = np.zeros(2)
 F = np.zeros(2)
 F_oc = np.zeros(2)
@@ -107,10 +106,9 @@ m = 0.5
 i = 0
 state = []
 
-pr_prev = pr.copy()
+pr_prev = p.copy()  # match arm start so dp_ref=0 on frame 1
 last_dwell_print_time = 0.0
 window_scale = 800
-
 dp_ref_prev = np.zeros(2)
 
 physics = None
@@ -127,6 +125,8 @@ if Physics is not None:
 
 K = Ks.copy()
 B = np.diag([20.0, 20.0])
+# Critical damping design: B = 2*sqrt(K*m) for each axis
+# B = np.diag([2.0*np.sqrt(K[0,0] * m), 2.0*np.sqrt(K[1,1] * m)])
 
 # ==================== Path Definition (Sinusoidal) ===================== #
 
@@ -141,8 +141,8 @@ bot_start = p.copy()
 # ==================== Disturbance ===================== #
 
 np.random.seed(1)
-dist_freqs = np.array([0.5, 1.3, 2.1, 3.7])
-dist_amps = np.array([2.0, 1.0, 0.6, 0.3]) * 0.5
+dist_freqs = np.array([0.1, 0.25, 0.4, 0.7])
+dist_amps = np.array([2.0, 1.0, 0.6, 0.3]) * 0.3
 dist_phase = np.random.rand(len(dist_freqs)) * 2 * np.pi
 
 def chaotic_disturbance(t):
@@ -156,8 +156,8 @@ def chaotic_disturbance(t):
 
 oc_np_waves = 4
 np.random.seed(42)
-oc_freqs = np.random.uniform(0.06, 0.24, oc_np_waves)
-oc_amps = np.random.uniform(30.0, 80.0, oc_np_waves)
+oc_freqs = np.random.uniform(0.02, 0.08, oc_np_waves)
+oc_amps = np.random.uniform(20.0, 50.0, oc_np_waves)
 oc_wavelengths = np.random.uniform(0.6, 2.5, oc_np_waves)
 oc_kvecs = np.stack([np.cos(np.random.rand(oc_np_waves)*2*np.pi), np.sin(np.random.rand(oc_np_waves)*2*np.pi)], axis=1)
 oc_kvecs = oc_kvecs * (2*np.pi/oc_wavelengths)[:,None]
@@ -183,16 +183,35 @@ if abs_mean[0] > 0 and abs_mean[1] > 0:
 
 haply_flip_x = True
 haply_flip_y = True
+haply_force_flip_x = True
+haply_force_flip_y = False
 haply_scale_x = 5.0
 haply_scale_y = 5.5
-haply_force_scale = 0.25
-haply_force_limit = 1.2
+haply_force_scale = 0.75  # TODO: tune gain -> 1.0 feels unstable
+haply_force_limit = 3.0  # TODO: tune force limit
+haply_force_filter_alpha = 0.35
 haply_center_raw = None
 haply_screen_center = np.array([0.0, 0.12], dtype=float)
+sim_cmd_gain = 0.35
+sim_current_gain = 1.0
+sim_water_drag = 6.0
+haptic_cmd_gain = 0.20
+haptic_current_gain = 1.35
+haptic_water_drag = 1.80
+haptic_cmd_gain_passive = 0.03
+haptic_water_drag_passive = 0.45
+haptic_passive_speed_threshold = 0.04
+haptic_active_speed_threshold = 0.12
+haptic_min_current_force = 0.08
+haptic_equalize_diagonals = True
+haptic_baseline_current_force = 0.26
+haptic_clarity_force = 0.35
+haptic_clarity_gain = 0.75
 
-oc_endpoint_scale = 0.1
+oc_endpoint_scale = 0.06
 oc_endpoint_scale_default = oc_endpoint_scale
 oc_endpoint_enabled = True
+show_true_position = False
 
 def ocean_current_field(pos, t):
     total = np.zeros(2)
@@ -201,6 +220,15 @@ def ocean_current_field(pos, t):
         val = oc_amps[i] * math.sin(kdotx - 2*math.pi*oc_freqs[i]*t + oc_phase[i])
         total += val * oc_dirs[i]
     return total
+
+def equalize_diagonal_force(vec):
+    v_norm = np.linalg.norm(vec)
+    if v_norm < 1e-12:
+        return vec
+    v_max = np.max(np.abs(vec))
+    if v_max < 1e-12:
+        return vec
+    return vec * (v_max / v_norm)
 
 # ==================== Visual State ===================== #
 
@@ -217,12 +245,20 @@ seam_cells = num_seam_segments
 seam_burn = np.zeros(seam_cells)
 seam_burn_gain = 1.0 / dwell_time_to_burn
 seam_burn_decay = 0.02
+weld_completion_threshold = 0.95
+weld_completion_fraction = 0.98
 
 
 # ==================== Main Loop ===================== #
 
 history_dist = []
 history_speed = []
+history_pos = []
+sim_start_time = None
+f_haply_filtered = np.zeros(2)
+f_haply_device_current = np.zeros(2)
+f_haply_world_current = np.zeros(2)
+current_dir_memory = np.array([1.0, 0.0], dtype=float)
 
 run = True
 while run:
@@ -245,6 +281,9 @@ while run:
                 oc_endpoint_enabled = not oc_endpoint_enabled
                 oc_endpoint_scale = oc_endpoint_scale_default if oc_endpoint_enabled else 0.0
                 print(f"ocean-current-on-endpoint toggled: {oc_endpoint_enabled} (scale={oc_endpoint_scale})")
+            if event.key == ord('t'):
+                show_true_position = not show_true_position
+                print(f"true-position marker toggled: {show_true_position}")
     
     # ==================== Dynamics  ===================== #
 
@@ -273,8 +312,8 @@ while run:
         pr_screen = np.array([(pm[0] - xc) / window_scale, -(pm[1] - yc) / window_scale])
 
     pr = pr_screen - np.array([x0, y0])
-
-    dp_ref_raw = (pr - pr_prev) / dt
+    
+    dp_ref_raw = (pr - pr_prev)/dt
     dp_ref = 0.8 * dp_ref_prev + 0.2 * dp_ref_raw
     dp_ref_prev = dp_ref.copy()
     pr_prev = pr.copy()
@@ -283,27 +322,67 @@ while run:
     vel_err = dp_ref - dp
     
     F_cmd = K.dot(pos_err) + B.dot(vel_err)
-    F_dist = chaotic_disturbance(t)
+    F_dist = chaotic_disturbance(t)  # unused now but can be added if desired
     
     endpoint_world = p + np.array([x0, y0])
     F_oc = ocean_current_field(endpoint_world, t) * oc_endpoint_scale
-    F = F_cmd + F_dist + F_oc
+    F = sim_cmd_gain * F_cmd + sim_current_gain * F_oc - sim_water_drag * dp
+    # Blend toward low restoring/drag forces when user intent is low,
+    # so the endpoint tends to drift with the current if the user is passive.
+    user_intent_speed = np.linalg.norm(dp_ref)
+    intent_denom = max(1e-9, haptic_active_speed_threshold - haptic_passive_speed_threshold)
+    intent_blend = np.clip((user_intent_speed - haptic_passive_speed_threshold) / intent_denom, 0.0, 1.0)
+    haptic_cmd_gain_eff = haptic_cmd_gain_passive + intent_blend * (haptic_cmd_gain - haptic_cmd_gain_passive)
+    haptic_water_drag_eff = haptic_water_drag_passive + intent_blend * (haptic_water_drag - haptic_water_drag_passive)
+    F_haptic_world = haptic_cmd_gain_eff * F_cmd + haptic_current_gain * F_oc - haptic_water_drag_eff * dp
+    oc_norm = np.linalg.norm(F_oc)
+    if oc_norm > 1e-9:
+        current_dir_memory = F_oc / oc_norm
+    if oc_norm > 1e-9:
+        haptic_norm = np.linalg.norm(F_haptic_world)
+        if haptic_norm < haptic_min_current_force:
+            F_haptic_world += (haptic_min_current_force - haptic_norm) * (F_oc / oc_norm)
+    if haptic_equalize_diagonals:
+        F_haptic_world = equalize_diagonal_force(F_haptic_world)
+    haptic_norm = np.linalg.norm(F_haptic_world)
+    if haptic_norm < haptic_baseline_current_force:
+        F_haptic_world += (haptic_baseline_current_force - haptic_norm) * current_dir_memory
+    haptic_norm = np.linalg.norm(F_haptic_world)
+    if haptic_norm > 1e-12:
+        clarity_boost = 1.0 + haptic_clarity_gain * math.exp(-haptic_norm / haptic_clarity_force)
+        F_haptic_world = clarity_boost * F_haptic_world
+    # F = np.zeros(2)
 
     if device_connected and physics is not None:
-        f_haply_sim = np.clip(F * haply_force_scale, -haply_force_limit, haply_force_limit)
+        f_haply_sim = F_haptic_world * haply_force_scale
+        f_norm = np.linalg.norm(f_haply_sim)
+        if f_norm > haply_force_limit and f_norm > 1e-12:
+            f_haply_sim = (haply_force_limit / f_norm) * f_haply_sim
+        f_haply_filtered = haply_force_filter_alpha * f_haply_sim + (1.0 - haply_force_filter_alpha) * f_haply_filtered
+        f_haply_world_current = f_haply_filtered.copy()
         f_haply_device = np.array([
-            -f_haply_sim[0] if haply_flip_x else f_haply_sim[0],
-            -f_haply_sim[1] if haply_flip_y else f_haply_sim[1]
+            -f_haply_filtered[0] if haply_force_flip_x else f_haply_filtered[0],
+            -f_haply_filtered[1] if haply_force_flip_y else f_haply_filtered[1]
         ], dtype=float)
+        f_haply_device_current = f_haply_device.copy()
         try:
             physics.update_force(f_haply_device)
         except Exception:
             device_connected = False
+            f_haply_device_current = np.zeros(2)
+            f_haply_world_current = np.zeros(2)
+    else:
+        f_haply_device_current = np.zeros(2)
+        f_haply_world_current = np.zeros(2)
 
     p_prev = p.copy()
 
     state.append([t, pr[0], pr[1], p[0], p[1], dp[0], dp[1], F[0], F[1], K[0,0], K[1,1]])
-    
+    history_pos.append((p[0] + x0, p[1] + y0))
+
+    if sim_start_time is None:
+        sim_start_time = t
+
     ddp = F/m
     dp += ddp*dt
     p += dp*dt
@@ -354,9 +433,11 @@ while run:
     if is_dwelling and cell_idx is not None:
         seam_burn[cell_idx] = min(1.0, seam_burn[cell_idx] + seam_burn_gain * dt)
 
-    # End sim if full seam is welded
-    if np.all(seam_burn >= 0.99):
+    # End sim if seam is effectively fully welded
+    welded_fraction = np.mean(seam_burn >= weld_completion_threshold)
+    if welded_fraction >= weld_completion_fraction:
         print("\n WHOLE SEAM SUCCESSFULLY WELDED! ENDING SIMULATION... \n")
+        run = False
         break
 
     i = i + 1
@@ -402,21 +483,32 @@ while run:
 
     if closest is not None:
         closest_px = (int(window_scale * closest[0] + xc), int(-window_scale * closest[1] + yc))
-        pygame.draw.circle(window, seam_color.astype(int), closest_px, max(5, int(15 * alpha)))
+        marker_radius = max(3, int(10 * alpha))
+        marker_color = (255, 180, 0, 110)
+        marker_surface = pygame.Surface(window.get_size(), pygame.SRCALPHA)
+        pygame.draw.circle(marker_surface, marker_color, closest_px, marker_radius)
+        pygame.draw.circle(marker_surface, (255, 120, 0, 180), closest_px, marker_radius, 1)
+        window.blit(marker_surface, (0, 0))
 
     # ==================== Render Arm ===================== #
 
     ref_px = int(window_scale*(pr[0] + x0) + xc)
     ref_py = int(-window_scale*(pr[1] + y0) + yc)
-    pygame.draw.circle(window, (0, 255, 0), (ref_px, ref_py), 5)
     
     pygame.draw.lines(window, (0, 0, 255), False, [(int(window_scale*(x0)+xc), int(-window_scale*(y0)+yc)), (int(window_scale*(x1w)+xc), int(-window_scale*(y1w)+yc)), (int(window_scale*(x2w)+xc), int(-window_scale*(y2w)+yc))], 6)
     pygame.draw.circle(window, (0, 0, 0), (int(window_scale*(x0)+xc),int(-window_scale*(y0)+yc)), 9)
     pygame.draw.circle(window, (0, 0, 0), (int(window_scale*(x1w)+xc),int(-window_scale*(y1w)+yc)), 9)
     pygame.draw.circle(window, (255, 0, 0), (int(window_scale*(x2w)+xc),int(-window_scale*(y2w)+yc)), 5)
 
-    force_scale = 50/(window_scale*(l1*l1))
-    pygame.draw.line(window, (0, 255, 255), (int(window_scale*(x2w)+xc),int(-window_scale*(y2w)+yc)), (int((window_scale*(x2w)+xc)+F[0]*force_scale),int((-window_scale*(y2w)+yc-F[1]*force_scale))), 2)
+    if show_true_position:
+        pygame.draw.circle(window, (0, 255, 0), (ref_px, ref_py), 5)
+
+    force_scale = 55.0
+    f_vis = np.array([
+        -f_haply_device_current[0] if haply_force_flip_x else f_haply_device_current[0],
+        -f_haply_device_current[1] if haply_force_flip_y else f_haply_device_current[1]
+    ], dtype=float)
+    pygame.draw.line(window, (0, 255, 255), (int(window_scale*(x2w)+xc),int(-window_scale*(y2w)+yc)), (int((window_scale*(x2w)+xc)+f_vis[0]*force_scale),int((-window_scale*(y2w)+yc-f_vis[1]*force_scale))), 2)
     force_scale_oc = 120/(window_scale*(l1*l1))
     pygame.draw.line(window, (255, 0, 255), (int(window_scale*(x2w)+xc),int(-window_scale*(y2w)+yc)), (int((window_scale*(x2w)+xc)+F_oc[0]*force_scale_oc),int((-window_scale*(y2w)+yc-F_oc[1]*force_scale_oc))), 2)
     
@@ -533,7 +625,10 @@ if len(history_dist) > 0:
     vel_mean = np.mean(history_speed)
     vel_std = np.std(history_speed)
     
+    completion_time = round(float(t - (sim_start_time or 0.0)), 2)
+
     metrics = {
+        "Completion_Time_s": completion_time,
         "RMSE_Position_mm": round(float(rmse), 1),
         "Velocity_Mean_mm_s": round(float(vel_mean), 1),
         "Velocity_Std_Dev_mm_s": round(float(vel_std), 1)
@@ -542,15 +637,53 @@ if len(history_dist) > 0:
     print("\n" + "="*30)
     print("        WELDING METRICS")
     print("="*30)
+    print(f" Completion Time: {completion_time:.2f} s")
     print(f" Position RMSE : {rmse:.1f} mm")
     print(f" Mean Velocity : {vel_mean:.1f} mm/s")
     print(f" Velocity Std  : {vel_std:.1f} mm/s")
     print("="*30 + "\n")
 
-    with open("weld_metrics.json", "w") as f:
+    with open("data/weld_metrics.json", "w") as f:
         json.dump(metrics, f, indent=4)
         
-    print(">> Metrics have been successfully saved to 'weld_metrics.json'")
+    print(">> Metrics have been successfully saved to 'data/weld_metrics.json'")
+
+    # ==================== Trajectory Plot ===================== #
+
+    import os
+    os.makedirs("plots", exist_ok=True)
+
+    pos_arr = np.array(history_pos)
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Draw seam with burn colour per segment
+    seam_base_c = np.array([30, 144, 255]) / 255.0
+    seam_hot_c  = np.array([255, 80,   0]) / 255.0
+    for idx in range(num_seam_segments):
+        a = seam_points[idx]
+        b = seam_points[idx + 1]
+        bp = seam_burn[idx]
+        col = seam_base_c * (1 - bp) + seam_hot_c * bp
+        ax.plot([a[0], b[0]], [a[1], b[1]], color=col, linewidth=4, solid_capstyle='round')
+
+    # Draw endpoint trajectory
+    ax.plot(pos_arr[:, 0], pos_arr[:, 1], color='steelblue', linewidth=1.2,
+            alpha=0.7, label='Endpoint trajectory')
+    ax.plot(pos_arr[0, 0],  pos_arr[0, 1],  'go', markersize=8, label='Start')
+    ax.plot(pos_arr[-1, 0], pos_arr[-1, 1], 'rs', markersize=8, label='End')
+
+    ax.set_xlabel('X (m)')
+    ax.set_ylabel('Y (m)')
+    ax.set_title(f'Weld Trajectory  |  RMSE {rmse:.1f} mm  |  Time {completion_time:.1f} s')
+    ax.legend(loc='upper right')
+    ax.set_aspect('equal')
+    ax.grid(True, linestyle='--', alpha=0.4)
+
+    plot_path = os.path.join("plots", "weld_trajectory.png")
+    fig.savefig(plot_path, dpi=150, bbox_inches='tight')
+    plt.close(fig)
+    print(f">> Trajectory plot saved to '{plot_path}'")
+
 
 
 

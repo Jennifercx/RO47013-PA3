@@ -353,20 +353,23 @@ while run:
         F_haptic_world = clarity_boost * F_haptic_world
     # F = np.zeros(2)
 
+    # ===== VISUAL ONLY: Device input enabled, haptic feedback disabled ===== #
     if device_connected and physics is not None:
+        # Calculate forces for visual display only (cyan/purple arrows)
         f_haply_sim = F_haptic_world * haply_force_scale
         f_norm = np.linalg.norm(f_haply_sim)
         if f_norm > haply_force_limit and f_norm > 1e-12:
             f_haply_sim = (haply_force_limit / f_norm) * f_haply_sim
         f_haply_filtered = haply_force_filter_alpha * f_haply_sim + (1.0 - haply_force_filter_alpha) * f_haply_filtered
         f_haply_world_current = f_haply_filtered.copy()
+        # Compute device-space force for visualization (with flips applied)
         f_haply_device = np.array([
             -f_haply_filtered[0] if haply_force_flip_x else f_haply_filtered[0],
             -f_haply_filtered[1] if haply_force_flip_y else f_haply_filtered[1]
         ], dtype=float)
-        f_haply_device_current = f_haply_device.copy()
+        f_haply_device_current = f_haply_device.copy()  # Use this for visualization
         try:
-            physics.update_force(f_haply_device)
+            physics.update_force(np.zeros(2))  # Send zero force = no haptic feedback
         except Exception:
             device_connected = False
             f_haply_device_current = np.zeros(2)
@@ -643,7 +646,7 @@ if len(history_dist) > 0:
     print(f" Velocity Std  : {vel_std:.1f} mm/s")
     print("="*30 + "\n")
 
-    with open("weld_metrics.json", "w") as f:
+    with open("data/weld_metrics.json", "w") as f:
         json.dump(metrics, f, indent=4)
         
     print(">> Metrics have been successfully saved to 'weld_metrics.json'")
