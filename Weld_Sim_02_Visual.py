@@ -6,6 +6,7 @@ import math
 import matplotlib.pyplot as plt
 import pygame
 import json
+import os
 from Physics import Physics
 
 # ==================== Robot Model ===================== #
@@ -646,14 +647,15 @@ if len(history_dist) > 0:
     print(f" Velocity Std  : {vel_std:.1f} mm/s")
     print("="*30 + "\n")
 
-    with open("data/weld_metrics.json", "w") as f:
+    os.makedirs("data", exist_ok=True)
+    data_path = os.path.join("data", "weld_metrics.json")
+    with open(data_path, "w") as f:
         json.dump(metrics, f, indent=4)
         
-    print(">> Metrics have been successfully saved to 'weld_metrics.json'")
+    print(">> Metrics have been successfully saved to '" + data_path + "'")
 
     # ==================== Trajectory Plot ===================== #
 
-    import os
     os.makedirs("plots", exist_ok=True)
 
     pos_arr = np.array(history_pos)
