@@ -1,0 +1,58 @@
+{
+  "notes": {
+    "formula": "ID = log2(integral_ds_over_W)",
+    "integral_definition": "integral_ds_over_W = L / W for constant corridor width",
+    "corridor_width_conventions": {
+      "half_width_from_threshold": 0.02,
+      "full_width": 0.04
+    },
+    "completion_time": "Not included here (measured separately per run).",
+    "computed_on": "2026-03-25"
+  },
+  "conditions": {
+    "baseline": {
+      "source_file": "Weld_Sim_01_Baseline.py",
+      "seam_length_L_m": 0.883212779,
+      "ds_mean_m": 0.017664256,
+      "ds_min_m": 0.016011493,
+      "ds_max_m": 0.020911324,
+      "integral_ds_over_W_full_0p04": 22.080319473,
+      "ID_full_0p04": 4.464689141,
+      "integral_ds_over_W_half_0p02": 44.160638946,
+      "ID_half_0p02": 5.464689141
+    },
+    "training_visual": {
+      "source_file": "Weld_Sim_02_Visual.py",
+      "seam_length_L_m": 1.146275319,
+      "ds_mean_m": 0.022925506,
+      "ds_min_m": 0.016071328,
+      "ds_max_m": 0.028917408,
+      "integral_ds_over_W_full_0p04": 28.656882968,
+      "ID_full_0p04": 4.84080979,
+      "integral_ds_over_W_half_0p02": 57.313765935,
+      "ID_half_0p02": 5.84080979
+    },
+    "training_visual_haptic": {
+      "source_file": "Weld_Sim_03_VisualHaptic.py",
+      "seam_length_L_m": 1.146275319,
+      "ds_mean_m": 0.022925506,
+      "ds_min_m": 0.016071328,
+      "ds_max_m": 0.028917408,
+      "integral_ds_over_W_full_0p04": 28.656882968,
+      "ID_full_0p04": 4.84080979,
+      "integral_ds_over_W_half_0p02": 57.313765935,
+      "ID_half_0p02": 5.84080979
+    },
+    "test": {
+      "source_file": "Weld_Sim_04_Test.py",
+      "seam_length_L_m": 1.592213824,
+      "ds_mean_m": 0.019902673,
+      "ds_min_m": 0.010444733,
+      "ds_max_m": 0.052685911,
+      "integral_ds_over_W_full_0p04": 39.805345589,
+      "ID_full_0p04": 5.314890283,
+      "integral_ds_over_W_half_0p02": 79.610691178,
+      "ID_half_0p02": 6.314890283
+    }
+  }
+}

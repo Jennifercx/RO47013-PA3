@@ -1,0 +1,13 @@
+Visual only ;Participant ;Completion time (s) ;Position RMSE (mm);Mean velocity  (mm/s);Velocity Std (mm/s);Difficulty (1-10);
+;David Boot ;31,76;19,8;67,4;134,4;;
+;Daan;44,83;16,6;51,2;82,7;;
+;Kevin;46,99;16,6;49,9;84;;
+;Jennifer;37,19;15,8;52,8;74,7;;
+;Sabine;35,05;27,9;47,9;57,8;;
+;;;;;;;
+Visual + Haptic  ;Participant ;Completion time (s) ;Position RMSE (mm);Mean velocity  (mm/s);Velocity Std (mm/s);Difficulty (1-10);Column1
+;Dian van Beusekom;39,72;19,1;63;86,4;;
+;Emma;41,81;20;47;56;4;Makkelijker, merk dat bij halfway point meer boven haar macht gaat werken omdat ze ergonomisch minder lekker zit -> pols oncomfortabel, meer strain bij hand (gefilmd)
+;Annabel;45,6;16,6;68,5;83,9;7;
+;Khang;57,41;14,4;36,8;89,6;;
+;Sarah;51,38;18,5;35,1;39,7;;

@@ -1,0 +1,25 @@
+metric,group,stage,n,normalized_mean_pct,normalized_std_pct
+completion_time_s,Visual,Baseline,5,100.0000,0.0000
+completion_time_s,Visual,Training,5,82.2429,21.7676
+completion_time_s,Visual,Evaluation,3,155.1772,68.7317
+completion_time_s,Visual + Haptic,Baseline,5,100.0000,0.0000
+completion_time_s,Visual + Haptic,Training,5,95.6172,41.8022
+completion_time_s,Visual + Haptic,Evaluation,3,138.6651,56.9091
+position_rmse_mm,Visual,Baseline,5,100.0000,0.0000
+position_rmse_mm,Visual,Training,5,64.3917,25.8434
+position_rmse_mm,Visual,Evaluation,3,55.0329,17.9871
+position_rmse_mm,Visual + Haptic,Baseline,5,100.0000,0.0000
+position_rmse_mm,Visual + Haptic,Training,5,71.7504,15.9985
+position_rmse_mm,Visual + Haptic,Evaluation,3,56.9523,15.9880
+difficulty_1_10,Visual,Baseline,5,100.0000,0.0000
+difficulty_1_10,Visual,Training,5,110.8929,50.2957
+difficulty_1_10,Visual,Evaluation,3,98.8095,44.3682
+difficulty_1_10,Visual + Haptic,Baseline,4,100.0000,0.0000
+difficulty_1_10,Visual + Haptic,Training,4,101.1310,23.2679
+difficulty_1_10,Visual + Haptic,Evaluation,2,105.3571,27.7792
+throughput_bits_s,Visual,Baseline,5,100.0000,0.0000
+throughput_bits_s,Visual,Training,5,141.1771,39.6091
+throughput_bits_s,Visual,Evaluation,3,91.7483,51.5818
+throughput_bits_s,Visual + Haptic,Baseline,5,100.0000,0.0000
+throughput_bits_s,Visual + Haptic,Training,5,131.2886,48.7321
+throughput_bits_s,Visual + Haptic,Evaluation,3,95.0872,34.3299

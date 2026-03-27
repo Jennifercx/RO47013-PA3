@@ -1,0 +1,31 @@
+group,participant,metric,n_points,slope_per_round,intercept,r_squared,delta_round1_to_round5,delta_percent_round1_to_round5
+Visual,Daan,completion_time_s,5,-1.5490,52.1590,0.1601,-7.2800,-12.74
+Visual,Daan,position_rmse_mm,5,0.0500,16.9700,0.0180,0.1000,0.60
+Visual,Daan,throughput_bits_s,5,0.0027,0.0950,0.1234,0.0124,14.60
+Visual,David Boot,completion_time_s,5,-0.3510,34.1430,0.2009,-0.8800,-2.55
+Visual,David Boot,position_rmse_mm,5,-6.8800,43.9600,0.7618,-33.2000,-74.77
+Visual,David Boot,throughput_bits_s,5,0.0015,0.1419,0.1916,0.0037,2.61
+Visual,Jennifer,completion_time_s,5,0.2090,38.4070,0.0250,1.3100,3.53
+Visual,Jennifer,position_rmse_mm,5,-0.9800,19.4400,0.8181,-3.3000,-17.65
+Visual,Jennifer,throughput_bits_s,5,-0.0007,0.1265,0.0316,-0.0045,-3.41
+Visual,Kevin,completion_time_s,5,-3.5850,59.1870,0.8631,-17.0000,-29.75
+Visual,Kevin,position_rmse_mm,5,-2.0400,24.1400,0.8102,-8.7000,-36.25
+Visual,Kevin,throughput_bits_s,5,0.0075,0.0786,0.8527,0.0359,42.35
+Visual,Sabine,completion_time_s,5,-1.9870,48.3510,0.3692,-8.1500,-16.88
+Visual,Sabine,position_rmse_mm,5,-0.0600,23.3400,0.0008,-2.3000,-9.50
+Visual,Sabine,throughput_bits_s,5,0.0050,0.1008,0.2797,0.0204,20.31
+Visual + Haptic,Annabel,completion_time_s,5,-3.8770,57.8950,0.4889,-20.3900,-33.13
+Visual + Haptic,Annabel,position_rmse_mm,5,-1.0300,21.5500,0.3472,-4.2000,-18.26
+Visual + Haptic,Annabel,throughput_bits_s,5,0.0072,0.0855,0.4659,0.0390,49.54
+Visual + Haptic,Dian van Beusekom,completion_time_s,5,-2.5960,48.7260,0.6871,-11.9500,-24.09
+Visual + Haptic,Dian van Beusekom,position_rmse_mm,5,-3.8200,33.5800,0.5319,-20.3000,-55.31
+Visual + Haptic,Dian van Beusekom,throughput_bits_s,5,0.0069,0.0989,0.7313,0.0310,31.74
+Visual + Haptic,Emma,completion_time_s,5,-3.8820,56.9580,0.8955,-15.1500,-27.82
+Visual + Haptic,Emma,position_rmse_mm,5,-1.9000,27.2000,0.5267,-9.9000,-39.92
+Visual + Haptic,Emma,throughput_bits_s,5,0.0089,0.0819,0.9167,0.0343,38.55
+Visual + Haptic,Khang,completion_time_s,5,-0.1770,61.8070,0.0045,0.6000,0.92
+Visual + Haptic,Khang,position_rmse_mm,5,-0.8300,18.8900,0.2380,-5.7000,-27.67
+Visual + Haptic,Khang,throughput_bits_s,5,0.0003,0.0784,0.0069,-0.0007,-0.91
+Visual + Haptic,Sarah,completion_time_s,5,-3.9410,65.9250,0.8779,-17.9600,-28.28
+Visual + Haptic,Sarah,position_rmse_mm,5,1.6200,13.4400,0.7520,6.2000,45.26
+Visual + Haptic,Sarah,throughput_bits_s,5,0.0066,0.0708,0.8729,0.0301,39.44

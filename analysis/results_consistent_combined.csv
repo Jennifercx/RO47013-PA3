@@ -1,0 +1,71 @@
+source_file,session,phase,phase_order,training_round,participant,group_raw,group,completion_time_s,position_rmse_mm,mean_velocity_mm_s,velocity_std_mm_s,difficulty_1_10,steering_id,throughput_bits_s
+results(Baseline).csv,Baseline,Baseline,0,,Daan,Visual,Visual,85.61,36.7,34.9,41.7,8.0,4.464689141,0.05215149095900012
+results(Baseline).csv,Baseline,Baseline,0,,David Boot,Visual,Visual,30.86,25.8,59.5,93.8,4.0,4.464689141,0.14467560405055088
+results(Baseline).csv,Baseline,Baseline,0,,Jennifer,Visual,Visual,38.53,17.4,45.9,65.2,7.0,4.464689141,0.11587565899299247
+results(Baseline).csv,Baseline,Baseline,0,,Kevin,Visual,Visual,70.22,38.5,35.8,36.7,7.0,4.464689141,0.06358144604101396
+results(Baseline).csv,Baseline,Baseline,0,,Sabine,Visual,Visual,54.2,53.5,56.9,56.8,8.0,4.464689141,0.08237433839483395
+results(Baseline).csv,Baseline,Baseline,0,,Annabel,Visual + Haptic,Visual + Haptic,72.82,31.1,49.2,51.2,7.0,4.464689141,0.06131130377643505
+results(Baseline).csv,Baseline,Baseline,0,,Dian van Beusekom,Visual + Haptic,Visual + Haptic,37.48,34.3,42.3,49.9,,4.464689141,0.11912190877801496
+results(Baseline).csv,Baseline,Baseline,0,,Emma,Visual + Haptic,Visual + Haptic,74.77,21.9,37.6,45.9,7.0,4.464689141,0.05971230628594357
+results(Baseline).csv,Baseline,Baseline,0,,Khang,Visual + Haptic,Visual + Haptic,37.86,26.7,41.8,67.0,6.0,4.464689141,0.11792628475964079
+results(Baseline).csv,Baseline,Baseline,0,,Sarah,Visual + Haptic,Visual + Haptic,65.28,24.3,31.3,36.7,4.0,4.464689141,0.06839290963541667
+results(Training 1).csv,Training 1,Training 1,1,1,Daan,Visual only,Visual,57.16,16.7,34.3,69.5,8.0,4.84080979,0.08468876469559132
+results(Training 1).csv,Training 1,Training 1,1,1,David Boot,Visual only,Visual,34.57,44.4,69.4,135.2,8.0,4.84080979,0.14002921000867805
+results(Training 1).csv,Training 1,Training 1,1,1,Jennifer,Visual only,Visual,37.09,18.7,50.1,70.5,7.0,4.84080979,0.1305152275545969
+results(Training 1).csv,Training 1,Training 1,1,1,Kevin,Visual only,Visual,57.14,24.0,40.3,45.8,6.0,4.84080979,0.08471840724536227
+results(Training 1).csv,Training 1,Training 1,1,1,Sabine,Visual only,Visual,48.28,24.2,43.9,37.6,7.0,4.84080979,0.10026532290803644
+results(Training 1).csv,Training 1,Training 1,1,1,Annabel,Visual + Haptic,Visual + Haptic,61.55,23.0,62.2,60.1,6.0,4.84080979,0.07864841251015435
+results(Training 1).csv,Training 1,Training 1,1,1,Dian van Beusekom,Visual + Haptic,Visual + Haptic,49.6,36.7,38.5,145.7,,4.84080979,0.09759697157258064
+results(Training 1).csv,Training 1,Training 1,1,1,Emma,Visual + Haptic,Visual + Haptic,54.45,24.8,57.9,77.4,7.0,4.84080979,0.08890376106519741
+results(Training 1).csv,Training 1,Training 1,1,1,Khang,Visual + Haptic,Visual + Haptic,65.33,20.6,31.3,42.8,7.0,4.84080979,0.07409780789836216
+results(Training 1).csv,Training 1,Training 1,1,1,Sarah,Visual + Haptic,Visual + Haptic,63.5,13.7,35.8,43.9,6.0,4.84080979,0.07623322503937008
+results(Training 2).csv,Training 2,Training 2,2,2,Daan,Visual only,Visual,43.31,17.6,49.2,97.1,,4.84080979,0.11177117963518816
+results(Training 2).csv,Training 2,Training 2,2,2,David Boot,Visual only,Visual,33.59,21.8,69.7,153.8,,4.84080979,0.14411461119380767
+results(Training 2).csv,Training 2,Training 2,2,2,Jennifer,Visual only,Visual,41.51,17.9,55.2,101.9,,4.84080979,0.11661791833293182
+results(Training 2).csv,Training 2,Training 2,2,2,Kevin,Visual only,Visual,49.87,18.6,44.6,84.5,,4.84080979,0.09706857409264087
+results(Training 2).csv,Training 2,Training 2,2,2,Sabine,Visual only,Visual,46.03,18.9,51.0,58.5,,4.84080979,0.10516640864653486
+results(Training 2).csv,Training 2,Training 2,2,2,Annabel,Visual + Haptic,Visual + Haptic,40.5,17.9,67.6,92.6,5.0,4.84080979,0.11952616765432099
+results(Training 2).csv,Training 2,Training 2,2,2,Dian van Beusekom,Visual + Haptic,Visual + Haptic,39.89,18.0,66.7,102.6,,4.84080979,0.12135396816244672
+results(Training 2).csv,Training 2,Training 2,2,2,Emma,Visual + Haptic,Visual + Haptic,49.76,23.5,60.2,77.0,5.0,4.84080979,0.0972831549437299
+results(Training 2).csv,Training 2,Training 2,2,2,Khang,Visual + Haptic,Visual + Haptic,60.34,14.5,35.0,59.9,,4.84080979,0.08022555170699369
+results(Training 2).csv,Training 2,Training 2,2,2,Sarah,Visual + Haptic,Visual + Haptic,56.79,17.8,35.5,40.9,,4.84080979,0.0852405316076774
+results(Training 3).csv,Training 3,Training 3,3,3,Daan,Visual only,Visual,44.83,16.6,51.2,82.7,,4.84080979,0.10798148092795003
+results(Training 3).csv,Training 3,Training 3,3,3,David Boot,Visual only,Visual,31.76,19.8,67.4,134.4,,4.84080979,0.1524184442695214
+results(Training 3).csv,Training 3,Training 3,3,3,Jennifer,Visual only,Visual,37.19,15.8,52.8,74.7,,4.84080979,0.13016428582952408
+results(Training 3).csv,Training 3,Training 3,3,3,Kevin,Visual only,Visual,46.99,16.6,49.9,84.0,,4.84080979,0.10301787167482442
+results(Training 3).csv,Training 3,Training 3,3,3,Sabine,Visual only,Visual,35.05,27.9,47.9,57.8,,4.84080979,0.13811154893009986
+results(Training 3).csv,Training 3,Training 3,3,3,Annabel,Visual + Haptic,Visual + Haptic,45.6,16.6,68.5,83.9,7.0,4.84080979,0.10615810942982455
+results(Training 3).csv,Training 3,Training 3,3,3,Dian van Beusekom,Visual + Haptic,Visual + Haptic,39.72,19.1,63.0,86.4,,4.84080979,0.12187335825780463
+results(Training 3).csv,Training 3,Training 3,3,3,Emma,Visual + Haptic,Visual + Haptic,41.81,20.0,47.0,56.0,4.0,4.84080979,0.11578114781152833
+results(Training 3).csv,Training 3,Training 3,3,3,Khang,Visual + Haptic,Visual + Haptic,57.41,14.4,36.8,89.6,,4.84080979,0.08431997543981885
+results(Training 3).csv,Training 3,Training 3,3,3,Sarah,Visual + Haptic,Visual + Haptic,51.38,18.5,35.1,39.7,,4.84080979,0.09421583865317243
+results(Training 4).csv,Training 4,Training 4,4,4,Daan,Visual only,Visual,42.38,17.9,44.2,73.5,,4.84080979,0.11422392142520055
+results(Training 4).csv,Training 4,Training 4,4,4,David Boot,Visual only,Visual,31.84,19.4,68.0,132.9,,4.84080979,0.15203548335427136
+results(Training 4).csv,Training 4,Training 4,4,4,Jennifer,Visual only,Visual,40.98,14.7,53.5,77.5,,4.84080979,0.11812615397755002
+results(Training 4).csv,Training 4,Training 4,4,4,Kevin,Visual only,Visual,48.02,15.6,52.0,90.5,,4.84080979,0.10080820054144106
+results(Training 4).csv,Training 4,Training 4,4,4,Sabine,Visual only,Visual,42.46,22.9,43.5,44.2,,4.84080979,0.11400870913801224
+results(Training 4).csv,Training 4,Training 4,4,4,Annabel,Visual + Haptic,Visual + Haptic,42.51,16.0,64.0,100.4,,4.84080979,0.11387461279698895
+results(Training 4).csv,Training 4,Training 4,4,4,Dian van Beusekom,Visual + Haptic,Visual + Haptic,37.83,20.4,66.4,115.7,,4.84080979,0.1279621937615649
+results(Training 4).csv,Training 4,Training 4,4,4,Emma,Visual + Haptic,Visual + Haptic,41.24,24.3,51.0,57.3,5.0,4.84080979,0.11738142070805042
+results(Training 4).csv,Training 4,Training 4,4,4,Khang,Visual + Haptic,Visual + Haptic,57.37,17.6,41.5,52.4,,4.84080979,0.08437876573121841
+results(Training 4).csv,Training 4,Training 4,4,4,Sarah,Visual + Haptic,Visual + Haptic,53.3,21.6,36.1,35.2,,4.84080979,0.09082194727954972
+results(Training 5).csv,Training 5,Training 5,5,5,Daan,Visual only,Visual,49.88,16.8,36.0,65.7,5.0,4.84080979,0.09704911367281474
+results(Training 5).csv,Training 5,Training 5,5,5,David Boot,Visual only,Visual,33.69,11.2,67.2,120.7,,4.84080979,0.14368684446423272
+results(Training 5).csv,Training 5,Training 5,5,5,Jennifer,Visual only,Visual,38.4,15.4,52.4,80.4,,4.84080979,0.12606275494791666
+results(Training 5).csv,Training 5,Training 5,5,5,Kevin,Visual only,Visual,40.14,15.3,48.7,86.5,,4.84080979,0.12059815122072745
+results(Training 5).csv,Training 5,Training 5,5,5,Sabine,Visual only,Visual,40.13,21.9,44.8,63.4,7.0,4.84080979,0.12062820308995763
+results(Training 5).csv,Training 5,Training 5,5,5,Annabel,Visual + Haptic,Visual + Haptic,41.16,18.8,56.5,76.8,,4.84080979,0.11760956729834791
+results(Training 5).csv,Training 5,Training 5,5,5,Dian van Beusekom,Visual + Haptic,Visual + Haptic,37.65,16.4,84.6,107.1,,4.84080979,0.1285739652058433
+results(Training 5).csv,Training 5,Training 5,5,5,Emma,Visual + Haptic,Visual + Haptic,39.3,14.9,60.8,89.1,6.0,4.84080979,0.12317582162849873
+results(Training 5).csv,Training 5,Training 5,5,5,Khang,Visual + Haptic,Visual + Haptic,65.93,14.9,33.7,65.4,,4.84080979,0.07342347626270286
+results(Training 5).csv,Training 5,Training 5,5,5,Sarah,Visual + Haptic,Visual + Haptic,45.54,19.9,43.6,36.8,4.0,4.84080979,0.1062979751866491
+results(Evaluation).csv,Evaluation,Evaluation,6,,Daan,Visual,Visual,67.54,13.1,40.1,65.4,6.0,5.314890283,0.07869248272135031
+results(Evaluation).csv,Evaluation,Evaluation,6,,David Boot,Visual,Visual,65.51,15.0,57.6,101.2,6.0,5.314890283,0.08113097669058159
+results(Evaluation).csv,Evaluation,Evaluation,6,,Emma,Visual,Visual,71.16,16.2,50.6,47.1,7.0,5.314890283,0.07468929571388422
+results(Evaluation).csv,Evaluation,Evaluation,6,,Jennifer,Visual,Visual,67.18,12.4,43.4,55.9,5.0,5.314890283,0.07911417509675499
+results(Evaluation).csv,Evaluation,Evaluation,6,,Khang,Visual,Visual,98.44,12.9,30.3,38.5,8.0,5.314890283,0.053991165004063396
+results(Evaluation).csv,Evaluation,Evaluation,6,,Annabel,Visual + Haptic,Visual + Haptic,68.28,13.0,60.3,59.2,6.0,5.314890283,0.077839635076157
+results(Evaluation).csv,Evaluation,Evaluation,6,,Dian van Beusekom,Visual + Haptic,Visual + Haptic,75.96,19.0,35.3,48.3,,5.314890283,0.06996959298314903
+results(Evaluation).csv,Evaluation,Evaluation,6,,Kevin,Visual + Haptic,Visual + Haptic,75.19,12.7,41.5,110.3,8.0,5.314890283,0.07068613223832958
+results(Evaluation).csv,Evaluation,Evaluation,6,,Sabine,Visual + Haptic,Visual + Haptic,71.76,19.8,40.7,36.4,7.0,5.314890283,0.0740648032748049
+results(Evaluation).csv,Evaluation,Evaluation,6,,Sarah,Visual + Haptic,Visual + Haptic,78.05,17.9,35.8,30.1,5.0,5.314890283,0.06809596775144139

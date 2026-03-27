@@ -1,0 +1,13 @@
+Visual only ;Participant ;Completion time (s) ;Position RMSE (mm);Mean velocity  (mm/s);Velocity Std (mm/s);Difficulty (1-10);Comments
+;David Boot ;34,57;44,4;69,4;135,2;8;
+;Daan;57,16;16,7;34,3;69,5;8;
+;Kevin;57,14;24;40,3;45,8;6;
+;Jennifer;37,09;18,7;50,1;70,5;7;
+;Sabine;48,28;24,2;43,9;37,6;7;
+;;;;;;;
+Visual + Haptic  ;Participant ;Completion time (s) ;Position RMSE (mm);Mean velocity  (mm/s);Velocity Std (mm/s);Difficulty (1-10);Comments
+;Dian van Beusekom;49,6;36,7;38,5;145,7;;
+;Emma;54,45;24,8;57,9;77,4;7;Voelde natuurlijker -> Misschien learning curve? -> Soms random duw bij een bocht, dus moeilijk om bocht af te maken -> Lastiger
+;Annabel;61,55;23;62,2;60,1;6;
+;Khang;65,33;20,6;31,3;42,8;7;
+;Sarah;63,5;13,7;35,8;43,9;6;

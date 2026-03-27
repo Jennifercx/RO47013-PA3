@@ -1,3 +1,5 @@
-/weld_metrics.json
+/data/weld_metrics.json
+/plots/weld_trajectory.png
+
 __pycache__/
 *.py[cod]

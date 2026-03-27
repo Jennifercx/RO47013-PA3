@@ -1,0 +1,11 @@
+Participant ;Completion time (s) ;Position RMSE (mm);Mean velocity  (mm/s);Velocity Std (mm/s);Difficulty (1-10);Comments;Training group
+David Boot ;65,51;15;57,6;101,2;6;;Visual 
+Dian van Beusekom;75,96;19;35,3;48,3;;;Visual + Haptic 
+Emma;71,16;16,2;50,6;47,1;7;Moeilijker zonder haptics, hij pakte de heletijd niet wat ze aan het doen was en schoot er steeds een beetje voorbij;Visual 
+Annabel;68,28;13;60,3;59,2;6;;Visual + Haptic 
+Daan;67,54;13,1;40,1;65,4;6;"""Ik let niet op de krachten"" - tijdens training. Maar in hindsight hielp het wel";Visual 
+Kevin;75,19;12,7;41,5;110,3;8;Moeilijkheden in de bochten;Visual + Haptic 
+Khang;98,44;12,9;30,3;38,5;8;Moeilijkheden in corners -> van richting veranderen bij iedereen lastig;Visual 
+Sarah;78,05;17,9;35,8;30,1;5;;Visual + Haptic 
+Jennifer;67,18;12,4;43,4;55,9;5;;Visual 
+Sabine;71,76;19,8;40,7;36,4;7;;Visual + Haptic 

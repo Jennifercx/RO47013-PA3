@@ -1,0 +1,11 @@
+Participant ;Completion time (s) ;Position RMSE (mm);Mean velocity  (mm/s);Velocity Std (mm/s);Difficulty (1-10) ;Comments;Training group
+David Boot ;30,86;25,8;59,5;93,8;4;;Visual 
+Dian van Beusekom;37,48;34,3;42,3;49,9;;;Visual + Haptic 
+Emma;74,77;21,9;37,6;45,9;7;Endpoint in het scherm bewoog niet zoals de verwachte beweging van de Haply device;Visual + Haptic 
+Annabel;72,82;31,1;49,2;51,2;7;;Visual + Haptic 
+Daan;85,61;36,7;34,9;41,7;8;;Visual 
+Kevin;70,22;38,5;35,8;36,7;7;;Visual 
+Khang;37,86;26,7;41,8;67;6;Lastig want normaal weld je in 3 dimensies;Visual + Haptic 
+Sarah;65,28;24,3;31,3;36,7;4;;Visual + Haptic 
+Jennifer;38,53;17,4;45,9;65,2;7;;Visual 
+Sabine;54,2;53,5;56,9;56,8;8;;Visual 

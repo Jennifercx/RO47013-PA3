@@ -1,0 +1,15 @@
+phase,phase_order,group,n,steering_id,movement_time_mean_s,movement_time_std_s,throughput_mean_bits_s,throughput_std_bits_s
+Baseline,0,Visual,5,4.464689,55.884,22.469,0.0917,0.0382
+Baseline,0,Visual + Haptic,5,4.464689,57.642,18.574,0.0853,0.0305
+Training 1,1,Visual,5,4.840810,46.848,10.727,0.1080,0.0259
+Training 1,1,Visual + Haptic,5,4.840810,58.886,6.630,0.0831,0.0099
+Training 2,2,Visual,5,4.840810,42.862,6.065,0.1149,0.0179
+Training 2,2,Visual + Haptic,5,4.840810,49.456,9.274,0.1007,0.0190
+Training 3,3,Visual,5,4.840810,39.164,6.500,0.1263,0.0207
+Training 3,3,Visual + Haptic,5,4.840810,47.184,7.233,0.1045,0.0154
+Training 4,4,Visual,5,4.840810,41.136,5.855,0.1198,0.0192
+Training 4,4,Visual + Haptic,5,4.840810,46.450,8.413,0.1069,0.0185
+Training 5,5,Visual,5,4.840810,40.448,5.895,0.1216,0.0167
+Training 5,5,Visual + Haptic,5,4.840810,45.916,11.570,0.1098,0.0220
+Evaluation,6,Visual,5,5.314890,73.966,13.836,0.0735,0.0112
+Evaluation,6,Visual + Haptic,5,5.314890,73.848,3.850,0.0721,0.0039

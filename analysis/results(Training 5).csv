@@ -1,0 +1,13 @@
+Visual only ;Participant ;Completion time (s) ;Position RMSE (mm);Mean velocity  (mm/s);Velocity Std (mm/s);Difficulty (1-10);
+;David Boot ;33,69;11,2;67,2;120,7;;
+;Daan;49,88;16,8;36;65,7;5;
+;Kevin;40,14;15,3;48,7;86,5;;
+;Jennifer;38,4;15,4;52,4;80,4;;
+;Sabine;40,13;21,9;44,8;63,4;7;
+;;;;;;;
+Visual + Haptic  ;Participant ;Completion time (s) ;Position RMSE (mm);Mean velocity  (mm/s);Velocity Std (mm/s);Difficulty (1-10);Column1
+;Dian van Beusekom;37,65;16,4;84,6;107,1;;
+;Emma;39,3;14,9;60,8;89,1;6;Dit keer wiebeliger? Minder attention span
+;Annabel;41,16;18,8;56,5;76,8;;
+;Khang;65,93;14,9;33,7;65,4;;
+;Sarah;45,54;19,9;43,6;36,8;4;

@@ -1,0 +1,13 @@
+Visual only ;Participant ;Completion time (s) ;Position RMSE (mm);Mean velocity  (mm/s);Velocity Std (mm/s);Difficulty (1-10);Comments
+;David Boot ;33,59;21,8;69,7;153,8;;
+;Daan;43,31;17,6;49,2;97,1;;
+;Kevin;49,87;18,6;44,6;84,5;;
+;Jennifer;41,51;17,9;55,2;101,9;;
+;Sabine;46,03;18,9;51;58,5;;
+;;;;;;;
+Visual + Haptic  ;Participant ;Completion time (s) ;Position RMSE (mm);Mean velocity  (mm/s);Velocity Std (mm/s);Difficulty (1-10);Comments
+;Dian van Beusekom;39,89;18;66,7;102,6;;
+;Emma;49,76;23,5;60,2;77;5;Makkelijker aan begin -> werkte meer mee, bij current change meer problemen
+;Annabel;40,5;17,9;67,6;92,6;5;
+;Khang;60,34;14,5;35;59,9;;
+;Sarah;56,79;17,8;35,5;40,9;;Focussen op alleen haptics werkte beter dan op pijltjes letten
